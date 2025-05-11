@@ -1,6 +1,6 @@
 # Build With AI
 
-![Project Demo](assets\pokemon.gif)
+![Project Demo](./assets/pokemon.gif)
 
 ## Adicionando depedencias
 
