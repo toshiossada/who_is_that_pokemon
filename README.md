@@ -11,7 +11,7 @@ flutter pub add dio
 ## 1 - Inicie o projeto
 
 ```dart
-import 'package:build_with_ai/src/app_widget.dart';
+import 'app_widget.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -67,17 +67,16 @@ class _HomePageState extends State<HomePage> {
 ## 4 - Criar classe Pokemon
 
 ```dart
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class PokemonModel {
   final String name;
-  final int num;
+  final int number;
 
-  PokemonModel({required this.name, required this.num});
+  PokemonModel({required this.name, required this.number});
 
   factory PokemonModel.fromMap(Map<String, dynamic> map) {
-    return PokemonModel(name: map['name'] as String, num: map['num'] as int);
+    return PokemonModel(name: map['name'] as String, number: map['number'] as int);
   }
 
   factory PokemonModel.fromJson(String source) =>
@@ -93,6 +92,7 @@ class _HomePageState extends State<HomePage> {
   PokemonModel? _pokemon;
   bool _isLoading = false;
   XFile? _lastImageTaken;
+  final _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pokedex_who_are_pokemon/models/pokemon_model.dart';
+import '../models/pokemon_model.dart';
 
 class PokemonRepository {
   final Dio _dio = Dio();
@@ -191,7 +191,7 @@ class PokemonRepository {
       {"text": 'Quem é esse Pokemon?: {"name": "Charmander", "number": 4}'},
       {"text": 'Quem é esse Pokemon?: {"name": "Pikachu", "number": 25}'},
       {"text": 'Quem é esse Pokemon?: {"name": "Clefairy", "number": 35}'},
-      {"text": 'Quem é esse Pokemon?: {"name": "	Machoke", "number": 67}'},
+      {"text": 'Quem é esse Pokemon?: {"name": "Machoke", "number": 67}'},
       {"text": 'Quem é esse Pokemon?: '},
     ];
 
@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> {
     final pokemonRepository = PokemonRepository();
     final result = await pokemonRepository.whoIsThatPokemon(img: imageFile);
 
-    _pokemon = result.name;
+    _pokemon = result;
     setState(() {
         _isLoading = false;
     });
@@ -363,9 +363,6 @@ class _CameraPageState extends State<CameraPage> {
 ## 12 - Crie metodo para abrir camera
 
 ```dart
-@override
-import 'package:flutter/material.dart';
-
 class _HomePageState extends State<HomePage> {
   Future<void> _openCameraAndIdentifyPokemon() async {
     final XFile? imageFile = await Navigator.push(
