@@ -92,7 +92,6 @@ class _HomePageState extends State<HomePage> {
   PokemonModel? _pokemon;
   bool _isLoading = false;
   XFile? _lastImageTaken;
-  final _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +248,8 @@ import 'package:flutter/material.dart';
 
 class _HomePageState extends State<HomePage> {
   Future<void> _pickImageAndIdentifyPokemon() async {
-    final XFile? imageFile = await _picker.pickImage(
+    final picker = ImagePicker();
+    final XFile? imageFile = await picker.pickImage(
       source: ImageSource.gallery,
     );
     if (imageFile != null) {
@@ -390,13 +390,35 @@ class _HomePageState extends State<HomePage> {
 
 ```
 
-## 13 - Permissão
+## 13 - Adicionando ação de abrir camera
+
+```dart
+import 'package:flutter/material.dart';
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  Widget build(BuildContext context) {
+    (...)
+    return Scaffold(
+            (...)
+            IconButton(
+              icon: const Icon(Icons.camera_alt),
+              onPressed: _isLoading ? null : _openCameraAndIdentifyPokemon,
+            ),
+    );
+  }
+}
+
+```
+
+## 14 - Permissão
 
 ```xml
     <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-## 14 - Gerando APK
+## 15 - Gerando APK
 
 ```bash
     flutter build apk --release
