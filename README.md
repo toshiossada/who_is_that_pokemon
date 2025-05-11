@@ -8,6 +8,7 @@
 flutter pub add camera
 flutter pub add image_picker
 flutter pub add dio
+flutter pub add dio
 ```
 
 ## 1 - Inicie o projeto
