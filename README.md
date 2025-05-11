@@ -309,7 +309,6 @@ class _CameraPageState extends State<CameraPage> {
   var loading = true;
   late List<CameraDescription> _cameras;
   late CameraController controller;
-
   @override
   void initState() {
     super.initState();
@@ -326,7 +325,7 @@ class _CameraPageState extends State<CameraPage> {
     _cameras = await availableCameras();
 
     controller = CameraController(
-      _cameras[0],
+      _cameras.firstWhere((e) => e.lensDirection == CameraLensDirection.back),
       ResolutionPreset.max,
       enableAudio: false,
     );

@@ -28,7 +28,7 @@ class _CameraPageState extends State<CameraPage> {
     _cameras = await availableCameras();
 
     controller = CameraController(
-      _cameras[0],
+      _cameras.firstWhere((e) => e.lensDirection == CameraLensDirection.back),
       ResolutionPreset.max,
       enableAudio: false,
     );
