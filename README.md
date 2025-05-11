@@ -120,7 +120,13 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (_lastImageTaken != null)
-              Image.file(File(_lastImageTaken!.path)),
+              SizedBox(
+                height: 30,
+                child:
+                    (!kIsWeb)
+                        ? Image.file(File(_lastImageTaken!.path))
+                        : Image.network(_lastImageTaken!.path),
+              ),
             const SizedBox(height: 20),
             if (_pokemon == null)
               Text(
@@ -156,28 +162,19 @@ class _HomePageState extends State<HomePage> {
 
 ```dart
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../models/pokemon_model.dart';
 
 class PokemonRepository {
   final Dio _dio = Dio();
 
   Future<PokemonModel> whoIsThatPokemon({required XFile img}) async {
-    final Uint8List imageBytes = await File(img.path).readAsBytes();
+    final imageBytes = await img.readAsBytes();
+    final base64Image = base64Encode(imageBytes);
 
-    String mimeType = 'image/jpeg';
-    final String fileName = img.name.toLowerCase();
-    if (fileName.endsWith('.png')) {
-      mimeType = 'image/png';
-    } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
-      mimeType = 'image/jpeg';
-    } else if (fileName.endsWith('.webp')) {
-      mimeType = 'image/webp';
-    }
     const apiKey = 'AIzaSyBFwE6ZdMiq887B-Q0BAbECNndLXoZwbS0';
     const url =
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
@@ -185,19 +182,21 @@ class PokemonRepository {
     final List<Map<String, dynamic>> partsList = [
       {
         "text":
-            'Você é um especialista Pokemon, te enviarei uma imagem e você precisa identificar o nome do pokemon e o numero dele em formato json.',
+            'Você é um especialista Pokemon, te enviarei uma imagem e perguntar "Quem é esse Pokemon?:" '
+            'e você precisa identificar o nome do pokemon e o numero dele em formato json, '
+            'Se não identificar o pokemon, retorne um aleatorio. EX:'
+            '{"name": "Ivysaur", "number": 2}'
+            '{"name": "Charmander", "number": 4}'
+            '{"name": "Pikachu", "number": 25}'
+            '{"name": "Clefairy", "number": 35}'
+            '{"name": "Machoke", "number": 67}',
       },
-      {"text": 'Quem é esse Pokemon?: {"name": "Ivysaur", "number": 2}'},
-      {"text": 'Quem é esse Pokemon?: {"name": "Charmander", "number": 4}'},
-      {"text": 'Quem é esse Pokemon?: {"name": "Pikachu", "number": 25}'},
-      {"text": 'Quem é esse Pokemon?: {"name": "Clefairy", "number": 35}'},
-      {"text": 'Quem é esse Pokemon?: {"name": "Machoke", "number": 67}'},
+
       {"text": 'Quem é esse Pokemon?: '},
     ];
 
-    final String base64Image = base64Encode(imageBytes);
     partsList.add({
-      "inline_data": {"mime_type": mimeType, "data": base64Image},
+      "inline_data": {"mime_type": 'image/jpeg', "data": base64Image},
     });
 
     final data = {
@@ -217,16 +216,18 @@ class PokemonRepository {
     );
   }
 }
+
+
 ```
 
 ## 8 - Crie metodo para processar imagem
 
 ```dart
 class _HomePageState extends State<HomePage> {
-  Future<void> _processImageAndIdentify(XFile imageFile) async {
+  Future<void> _processImageAndIdentify(XFile img) async {
 
     final pokemonRepository = PokemonRepository();
-    final result = await pokemonRepository.whoIsThatPokemon(img: imageFile);
+    final result = await pokemonRepository.whoIsThatPokemon(img: img);
 
     _pokemon = result;
     setState(() {
@@ -389,7 +390,13 @@ class _HomePageState extends State<HomePage> {
 
 ```
 
-## 13 - Gerando APK
+## 13 - Permissão
+
+```xml
+    <uses-permission android:name="android.permission.INTERNET" />
+```
+
+## 14 - Gerando APK
 
 ```bash
     flutter build apk --release

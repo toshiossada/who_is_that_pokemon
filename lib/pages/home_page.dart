@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pokedex_who_are_pokemon/models/pokemon_model.dart';
@@ -18,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   XFile? _lastImageTaken;
   var _isLoading = false;
   final _picker = ImagePicker();
-  var err = '';
 
   Future<void> _openCameraAndIdentifyPokemon() async {
     final XFile? imageFile = await Navigator.push(
@@ -51,15 +51,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _processImageAndIdentify(XFile imageFile) async {
+  Future<void> _processImageAndIdentify(XFile img) async {
     try {
-      err = '';
       final pokemonRepository = PokemonRepository();
-      final result = await pokemonRepository.whoIsThatPokemon(img: imageFile);
+
+      final result = await pokemonRepository.whoIsThatPokemon(img: img);
 
       _pokemon = result;
-    } catch (e) {
-      err = e.toString();
     } finally {
       setState(() {
         _isLoading = false;
@@ -79,11 +77,17 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (_lastImageTaken != null)
-              Image.file(File(_lastImageTaken!.path)),
+              SizedBox(
+                height: 600,
+                child:
+                    (!kIsWeb)
+                        ? Image.file(File(_lastImageTaken!.path))
+                        : Image.network(_lastImageTaken!.path),
+              ),
             const SizedBox(height: 20),
             if (_pokemon == null)
               Text(
-                _pokemon?.name ?? 'Tire uma foto para começar!',
+                'Tire uma foto para começar!',
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               )
