@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
 
 ```
 
-## 7 - Crie Pokemon Repository
+## 7 - Crie Pokemon Repository e Troque a APIKEY do AI STUDIO
 
 ```dart
 import 'dart:convert';
@@ -174,7 +174,7 @@ class PokemonRepository {
     final imageBytes = await img.readAsBytes();
     final base64Image = base64Encode(imageBytes);
 
-    const apiKey = 'AIzaSyBFwE6ZdMiq887B-Q0BAbECNndLXoZwbS0';
+    const apiKey = 'API_KEY';
     const url =
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
