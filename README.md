@@ -1,13 +1,12 @@
 # Build With AI
 
-![Project Demo](assets\pokemon.gif)
+![Project Demo](./assets/pokemon.gif)
 
 ## Adicionando depedencias
 
 ```bash
 flutter pub add camera
 flutter pub add image_picker
-flutter pub add dio
 flutter pub add dio
 ```
 
